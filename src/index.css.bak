@@ -1,0 +1,27 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700;800&family=Lato:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --color-rosa: #C9A0A0;
+  --color-rosa-claro: #F2D9D9;
+  --color-bordo: #7B2D42;
+  --color-dourado: #C9A96E;
+  --color-dourado-claro: #E8D5A3;
+  --color-creme: #FAF3EE;
+  --color-text: #422c2c;
+  --font-family-display: 'Cormorant Garamond', serif;
+  --font-family-body: 'Lato', sans-serif;
+}
+
+html, body {
+  font-family: var(--font-family-body);
+}
+
+body {
+  background: transparent;
+  color: var(--color-text);
+}
+
+::placeholder {
+  color: rgba(66, 44, 44, 0.45);
+}
