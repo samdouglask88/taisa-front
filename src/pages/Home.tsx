@@ -66,10 +66,11 @@ export default function Home() {
           <div className="hero-visual anim-fade-up anim-delay-2">
             <div className="hero-image-wrap">
               <div className="hero-image-placeholder">
-                <span style={{ fontSize: '5rem' }}>✨</span>
-                <p style={{ color: 'var(--wine)', fontFamily: 'var(--font-display)', fontSize: '1.5rem', marginTop: '1rem' }}>
-                  Taisa Ateliê
-                </p>
+                <img
+                  src="/logo.jpeg"
+                  alt="Taisa Ateliê"
+                  className="hero-logo-float"
+                />
               </div>
               <div className="hero-card-float hero-card-float-1">
                 <span>💅</span>

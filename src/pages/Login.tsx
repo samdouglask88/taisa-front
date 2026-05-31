@@ -26,17 +26,14 @@ export default function Login() {
     <div className="login-page">
       <div className="login-bg-blob login-bg-blob-1" />
       <div className="login-bg-blob login-bg-blob-2" />
+      <div className="login-bg-blob login-bg-blob-3" />
       <div className="login-bg-grid" />
 
       <div className="login-card-wrap">
         <div className="login-card">
           {/* Brand */}
           <div className="login-brand">
-            <div className="login-brand-icon">T</div>
-            <div>
-              <h1 className="login-brand-name">TAISA</h1>
-              <p className="login-brand-sub">ATELIÊ DE BELEZA</p>
-            </div>
+            <img src="/logo.jpeg" alt="Taisa Ateliê" className="login-brand-logo" />
           </div>
           <div className="login-divider" />
           <p className="login-welcome">Acesse o painel administrativo</p>

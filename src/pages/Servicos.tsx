@@ -1,28 +1,56 @@
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import type { Servico } from '../types'
+import { apiFetch } from '../services/api'
 
-const SERVICOS: Servico[] = [
-  { id: '1', nome: 'Corte Feminino',        descricao: 'Corte personalizado com lavatório, hidratação e finalização premium. Inclui consultoria de estilo.',   preco: 120, duracao: 60,  categoria: 'Cabelo',   icone: '✂️' },
-  { id: '2', nome: 'Coloração Completa',    descricao: 'Tintura com proteção dos fios, hidratação profunda e acabamento perfeito com produtos premium.',        preco: 280, duracao: 150, categoria: 'Cabelo',   icone: '🎨' },
-  { id: '3', nome: 'Manicure & Pedicure',   descricao: 'Cuidado completo para mãos e pés com esmalte importado, esmaltação em gel e produtos hidratantes.',    preco: 90,  duracao: 90,  categoria: 'Unhas',    icone: '💅' },
-  { id: '4', nome: 'Escova Progressiva',    descricao: 'Alisamento duradouro com proteção térmica e tratamento anti-frizz de última geração.',                 preco: 350, duracao: 180, categoria: 'Cabelo',   icone: '💎' },
-  { id: '5', nome: 'Design de Sobrancelha', descricao: 'Modelagem personalizada com henna, linha ou micropigmentação artesanal para um olhar marcante.',       preco: 75,  duracao: 45,  categoria: 'Estética', icone: '✨' },
-  { id: '6', nome: 'Ritual de Beleza',      descricao: 'Pacote completo: manicure, pedicure, design de sobrancelha e máscara facial hidratante.',              preco: 220, duracao: 180, categoria: 'Pacote',   icone: '🌸' },
-  { id: '7', nome: 'Hidratação Profunda',   descricao: 'Tratamento intensivo com ampolas de nutrição, reconstrução e selagem dos fios danificados.',           preco: 160, duracao: 90,  categoria: 'Cabelo',   icone: '💧' },
-  { id: '8', nome: 'Maquiagem Social',      descricao: 'Maquiagem profissional para eventos, casamentos, formaturas e ocasiões especiais.',                    preco: 200, duracao: 120, categoria: 'Estética', icone: '💄' },
-  { id: '9', nome: 'Spa dos Pés',           descricao: 'Esfoliação, hidratação profunda, massagem relaxante e esmaltação para pés perfeitos.',                 preco: 70,  duracao: 60,  categoria: 'Unhas',    icone: '🌿' },
+const ICONE_MAP: Record<string, string> = {
+  'Cabelo':  '✂️',
+  'Unhas':   '💅',
+  'Estética': '✨',
+  'Pacote':  '🌸',
+}
+
+const FALLBACK: Servico[] = [
+  { id: '1', nome: 'Corte Feminino',        descricao: 'Corte personalizado com lavatório, hidratação e finalização premium.', preco: 120, duracao: 60,  categoria: 'Cabelo',   icone: '✂️' },
+  { id: '2', nome: 'Coloração Completa',    descricao: 'Tintura com proteção dos fios e acabamento perfeito.',                 preco: 280, duracao: 150, categoria: 'Cabelo',   icone: '🎨' },
+  { id: '3', nome: 'Manicure & Pedicure',   descricao: 'Cuidado completo para mãos e pés com esmalte importado.',             preco: 90,  duracao: 90,  categoria: 'Unhas',    icone: '💅' },
+  { id: '4', nome: 'Escova Progressiva',    descricao: 'Alisamento duradouro com proteção térmica anti-frizz.',               preco: 350, duracao: 180, categoria: 'Cabelo',   icone: '💎' },
+  { id: '5', nome: 'Design de Sobrancelha', descricao: 'Modelagem personalizada com henna ou micropigmentação.',              preco: 75,  duracao: 45,  categoria: 'Estética', icone: '✨' },
+  { id: '6', nome: 'Ritual de Beleza',      descricao: 'Pacote completo: manicure, pedicure e máscara facial.',               preco: 220, duracao: 180, categoria: 'Pacote',   icone: '🌸' },
+  { id: '7', nome: 'Hidratação Profunda',   descricao: 'Tratamento intensivo com ampolas de nutrição e reconstrução.',        preco: 160, duracao: 90,  categoria: 'Cabelo',   icone: '💧' },
+  { id: '8', nome: 'Maquiagem Social',      descricao: 'Maquiagem profissional para eventos e ocasiões especiais.',           preco: 200, duracao: 120, categoria: 'Estética', icone: '💄' },
+  { id: '9', nome: 'Spa dos Pés',           descricao: 'Esfoliação, hidratação e massagem relaxante para pés perfeitos.',     preco: 70,  duracao: 60,  categoria: 'Unhas',    icone: '🌿' },
 ]
 
 const CATEGORIAS = ['Todos', 'Cabelo', 'Unhas', 'Estética', 'Pacote']
 
-import { useState } from 'react'
+function mapServico(s: any): Servico {
+  return {
+    id: s._id ?? s.id,
+    nome: s.name ?? s.nome,
+    descricao: s.description ?? s.descricao,
+    preco: s.price ?? s.preco,
+    duracao: s.durationMinutes ?? s.duracao,
+    categoria: s.category ?? s.categoria,
+    icone: ICONE_MAP[s.category ?? s.categoria] ?? '💫',
+  }
+}
 
 export default function Servicos() {
   const [catAtiva, setCatAtiva] = useState('Todos')
+  const [servicos, setServicos] = useState<Servico[]>(FALLBACK)
+
+  useEffect(() => {
+    apiFetch('/services')
+      .then((data: any[]) => {
+        if (data && data.length > 0) setServicos(data.map(mapServico))
+      })
+      .catch(() => {})
+  }, [])
 
   const filtrados = catAtiva === 'Todos'
-    ? SERVICOS
-    : SERVICOS.filter(s => s.categoria === catAtiva)
+    ? servicos
+    : servicos.filter(s => s.categoria === catAtiva)
 
   return (
     <div>

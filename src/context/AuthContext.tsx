@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 import type { User } from '../types'
+import { apiFetch } from '../services/api'
 
 interface AuthContextType {
   user: User | null
@@ -10,9 +11,6 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null)
 
-const CREDENTIALS = { email: 'admin@taisa.com', senha: 'taisa2024' }
-const MOCK_USER: User = { email: 'admin@taisa.com', nome: 'Taisa Admin', role: 'admin' }
-
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
 
@@ -22,18 +20,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const login = async (email: string, senha: string): Promise<boolean> => {
-    await new Promise(r => setTimeout(r, 800))
-    if (email === CREDENTIALS.email && senha === CREDENTIALS.senha) {
-      setUser(MOCK_USER)
-      localStorage.setItem('taisa_user', JSON.stringify(MOCK_USER))
+    try {
+      const data = await apiFetch('/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({ email, password: senha }),
+      })
+      const loggedUser: User = { email: data.user.email, nome: data.user.name, role: 'admin' }
+      localStorage.setItem('taisa_token', data.token)
+      localStorage.setItem('taisa_user', JSON.stringify(loggedUser))
+      setUser(loggedUser)
       return true
+    } catch {
+      return false
     }
-    return false
   }
 
   const logout = () => {
     setUser(null)
     localStorage.removeItem('taisa_user')
+    localStorage.removeItem('taisa_token')
   }
 
   return (

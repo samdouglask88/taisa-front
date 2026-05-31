@@ -34,6 +34,16 @@ export interface Depoimento {
   foto?: string
 }
 
+export interface Cliente {
+  _id: string
+  name: string
+  email: string
+  phone: string
+  address?: string
+  instagram?: string
+  createdAt: string
+}
+
 export interface User {
   email: string
   nome: string
