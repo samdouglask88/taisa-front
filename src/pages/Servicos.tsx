@@ -2,13 +2,8 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import type { Servico } from '../types'
 import { apiFetch } from '../services/api'
-
-const ICONE_MAP: Record<string, string> = {
-  'Cabelo':  '✂️',
-  'Unhas':   '💅',
-  'Estética': '✨',
-  'Pacote':  '🌸',
-}
+import { ServiceIcon } from '../utils/serviceIcons'
+import Reveal from '../components/Reveal'
 
 const FALLBACK: Servico[] = [
   { id: '1', nome: 'Corte Feminino',        descricao: 'Corte personalizado com lavatório, hidratação e finalização premium.', preco: 120, duracao: 60,  categoria: 'Cabelo',   icone: '✂️' },
@@ -32,7 +27,7 @@ function mapServico(s: any): Servico {
     preco: s.price ?? s.preco,
     duracao: s.durationMinutes ?? s.duracao,
     categoria: s.category ?? s.categoria,
-    icone: ICONE_MAP[s.category ?? s.categoria] ?? '💫',
+    icone: '',
   }
 }
 
@@ -89,9 +84,9 @@ export default function Servicos() {
       <section className="section" style={{ background: 'var(--cream)' }}>
         <div className="container">
           <div className="grid-3">
-            {filtrados.map(s => (
-              <div key={s.id} className="service-card">
-                <div className="service-card-icon">{s.icone}</div>
+            {filtrados.map((s, i) => (
+              <Reveal key={s.id} delay={(i % 3) * 80} className="service-card">
+                <div className="service-card-icon"><ServiceIcon nome={s.nome} categoria={s.categoria} /></div>
                 <span className="service-card-category">{s.categoria}</span>
                 <h3 className="service-card-title">{s.nome}</h3>
                 <p className="service-card-desc">{s.descricao}</p>
@@ -105,7 +100,7 @@ export default function Servicos() {
                 <Link to="/agendamento" className="btn btn-primary btn-full" style={{ marginTop: '1.25rem' }}>
                   Agendar este serviço
                 </Link>
-              </div>
+              </Reveal>
             ))}
           </div>
         </div>

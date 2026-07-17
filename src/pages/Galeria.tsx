@@ -1,18 +1,20 @@
 import { useState } from 'react'
+import Reveal from '../components/Reveal'
+import fotoCabelo from '../assets/photo-1522337360788-8b13dee7a37e.jpg'
+import fotoMaquiagem from '../assets/photo-1487412947147-5cebf100ffc2.jpg'
+import fotoFacial from '../assets/photo-1570172619644-dfd03ed5d881.jpg'
+import fotoUnhas from '../assets/photo-1604654894610-df63bc536371.jpg'
+import fotoAmbiente from '../assets/photo-1560066984-138dadb4c035.jpg'
 
 const FOTOS = [
-  { id: '1', categoria: 'Cabelo',   titulo: 'Coloração Premium',      emoji: '🎨', bg: '#f9e4e8' },
-  { id: '2', categoria: 'Unhas',    titulo: 'Manicure Clássica',       emoji: '💅', bg: '#fdf0f0' },
-  { id: '3', categoria: 'Cabelo',   titulo: 'Escova Progressiva',      emoji: '💎', bg: '#f0e8f9' },
-  { id: '4', categoria: 'Estética', titulo: 'Design de Sobrancelha',   emoji: '✨', bg: '#e8f4f9' },
-  { id: '5', categoria: 'Cabelo',   titulo: 'Corte & Estilo',          emoji: '✂️', bg: '#f9ede8' },
-  { id: '6', categoria: 'Unhas',    titulo: 'Esmaltação em Gel',       emoji: '🌸', bg: '#f9e4e8' },
-  { id: '7', categoria: 'Estética', titulo: 'Maquiagem Social',        emoji: '💄', bg: '#fdf0f0' },
-  { id: '8', categoria: 'Cabelo',   titulo: 'Hidratação Intensiva',    emoji: '💧', bg: '#e8f9f4' },
-  { id: '9', categoria: 'Unhas',    titulo: 'Spa dos Pés',             emoji: '🌿', bg: '#f0f9e8' },
+  { id: '1', categoria: 'Ambiente', titulo: 'Nosso espaço',       src: fotoAmbiente,  wide: true },
+  { id: '2', categoria: 'Cabelo',   titulo: 'Cuidado e estilo',    src: fotoCabelo },
+  { id: '3', categoria: 'Estética', titulo: 'Maquiagem Social',    src: fotoMaquiagem },
+  { id: '4', categoria: 'Estética', titulo: 'Ritual Facial',       src: fotoFacial },
+  { id: '5', categoria: 'Unhas',    titulo: 'Esmaltação Statement', src: fotoUnhas },
 ]
 
-const CATEGORIAS = ['Todos', 'Cabelo', 'Unhas', 'Estética']
+const CATEGORIAS = ['Todos', 'Cabelo', 'Unhas', 'Estética', 'Ambiente']
 
 export default function Galeria() {
   const [cat, setCat] = useState('Todos')
@@ -54,16 +56,18 @@ export default function Galeria() {
       <section className="section" style={{ background: 'var(--cream)' }}>
         <div className="container">
           <div className="gallery-grid">
-            {filtradas.map(foto => (
-              <div key={foto.id} className="gallery-item" style={{ background: foto.bg }}>
-                <div className="gallery-placeholder">
-                  <span style={{ fontSize: '3.5rem' }}>{foto.emoji}</span>
-                </div>
+            {filtradas.map((foto, i) => (
+              <Reveal
+                key={foto.id}
+                delay={(i % 4) * 70}
+                className={`gallery-item${foto.wide ? ' wide' : ''}`}
+              >
+                <img src={foto.src} alt={foto.titulo} loading="lazy" />
                 <div className="gallery-overlay">
                   <span className="gallery-overlay-cat">{foto.categoria}</span>
                   <strong className="gallery-overlay-title">{foto.titulo}</strong>
                 </div>
-              </div>
+              </Reveal>
             ))}
           </div>
         </div>

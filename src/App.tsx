@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'r
 import { AuthProvider, useAuth } from './context/AuthContext'
 import Header from './components/layout/Header'
 import Footer from './components/layout/Footer'
+import WhatsAppFloat from './components/WhatsAppFloat'
 import Home from './pages/Home'
 import Servicos from './pages/Servicos'
 import Agendamento from './pages/Agendamento'
@@ -38,6 +39,7 @@ function AppContent() {
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       {!noLayout && <Footer />}
+      {!noLayout && <WhatsAppFloat />}
     </>
   )
 }

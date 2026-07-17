@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { CheckCircle2, Phone, Clock, MessageCircle } from 'lucide-react'
 
 interface FormData { nome: string; email: string; telefone: string; assunto: string; mensagem: string }
 const EMPTY: FormData = { nome: '', email: '', telefone: '', assunto: '', mensagem: '' }
@@ -46,7 +47,7 @@ export default function Contato() {
 
             {submitted && (
               <div className="alert-success">
-                <span className="alert-icon">✓</span>
+                <span className="alert-icon"><CheckCircle2 size={20} /></span>
                 <div>
                   <strong>Mensagem enviada!</strong>
                   <p>Retornaremos em breve por e-mail ou WhatsApp.</p>
@@ -97,7 +98,7 @@ export default function Contato() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
             {[
               {
-                titulo: 'Informações de contato', icone: '📞',
+                titulo: 'Informações de contato', Icone: Phone,
                 itens: [
                   { label: 'Telefone', valor: '(11) 98765-4321' },
                   { label: 'E-mail', valor: 'contato@taisa.com.br' },
@@ -105,7 +106,7 @@ export default function Contato() {
                 ]
               },
               {
-                titulo: 'Horários de funcionamento', icone: '🕐',
+                titulo: 'Horários de funcionamento', Icone: Clock,
                 itens: [
                   { label: 'Seg – Sex', valor: '09h às 19h' },
                   { label: 'Sábado', valor: '10h às 17h' },
@@ -115,7 +116,7 @@ export default function Contato() {
             ].map(card => (
               <div key={card.titulo} className="card" style={{ padding: '1.75rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.25rem' }}>
-                  <div className="contact-info-icon">{card.icone}</div>
+                  <div className="contact-info-icon"><card.Icone size={20} /></div>
                   <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.2rem', color: 'var(--wine-dark)' }}>{card.titulo}</h3>
                 </div>
                 <dl className="contact-info-list">
@@ -137,9 +138,7 @@ export default function Contato() {
               className="btn btn-primary btn-full btn-lg"
               style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
-              </svg>
+              <MessageCircle size={20} />
               Chamar no WhatsApp
             </a>
           </div>

@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { PartyPopper } from 'lucide-react'
 import type { Servico, BookingStep } from '../types'
 import { apiFetch } from '../services/api'
+import { ServiceIcon } from '../utils/serviceIcons'
 
 const SERVICOS: Servico[] = [
   { id: '1', nome: 'Corte Feminino',        descricao: 'Corte personalizado com lavatório e finalização.',  preco: 120, duracao: 60,  categoria: 'Cabelo',   icone: '✂️' },
@@ -84,7 +86,9 @@ export default function Agendamento() {
     return (
       <div className="section" style={{ minHeight: '70vh', display: 'flex', alignItems: 'center', background: 'var(--cream)' }}>
         <div className="container" style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '4rem', marginBottom: '1.5rem' }}>🌸</div>
+          <div style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'center' }}>
+            <PartyPopper size={64} color="var(--gold)" strokeWidth={1.5} />
+          </div>
           <h2 className="section-title">Agendamento confirmado!</h2>
           <p style={{ color: 'var(--text-muted)', maxWidth: '420px', margin: '1rem auto 2rem', lineHeight: 1.8 }}>
             <strong>{booking.nome}</strong>, seu <strong>{booking.servico?.nome}</strong> está marcado para{' '}
@@ -145,7 +149,7 @@ export default function Agendamento() {
                     className={`booking-service-card${booking.servico?.id === s.id ? ' selected' : ''}`}
                     onClick={() => setBooking(b => ({ ...b, servico: s }))}
                   >
-                    <span className="booking-service-icon">{s.icone}</span>
+                    <span className="booking-service-icon"><ServiceIcon nome={s.nome} categoria={s.categoria} size={22} /></span>
                     <div className="booking-service-info">
                       <strong>{s.nome}</strong>
                       <small>{s.duracao} min · R$ {s.preco.toFixed(2)}</small>

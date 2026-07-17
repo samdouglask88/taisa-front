@@ -233,6 +233,20 @@ h3.display { font-size: clamp(1.4rem, 2.5vw, 1.9rem); font-weight: 400; }
 .anim-float    { animation: float   5s ease-in-out infinite; }
 .anim-slide-down { animation: slideDown .3s ease both; }
 
+/* Scroll reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity .7s ease, transform .7s ease;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+}
+
 .anim-delay-1 { animation-delay: .1s; }
 .anim-delay-2 { animation-delay: .2s; }
 .anim-delay-3 { animation-delay: .3s; }
@@ -1212,7 +1226,6 @@ td .client-email { font-size: 0.76rem; color: var(--text-light); }
   gap: 12px;
 }
 @media (min-width: 768px)  { .gallery-grid { grid-template-columns: repeat(3, 1fr); gap: 16px; } }
-@media (min-width: 1024px) { .gallery-grid { grid-template-columns: repeat(4, 1fr); } }
 .gallery-item {
   border-radius: var(--radius-lg);
   overflow: hidden;
@@ -1286,6 +1299,99 @@ td .client-email { font-size: 0.76rem; color: var(--text-light); }
   font-size: 0.7rem;
   margin-top: 4px;
   flex-shrink: 0;
+}
+
+/* ── WHATSAPP FLOAT ──────────────────────────────────── */
+.whatsapp-float {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 900;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #25d366, #1da851);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 8px 28px rgba(37,211,102,0.45);
+  transition: transform var(--t-base), box-shadow var(--t-base);
+}
+.whatsapp-float:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 12px 36px rgba(37,211,102,0.55);
+}
+.whatsapp-float::before {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 2px solid rgba(37,211,102,0.4);
+  animation: pulse-ring 2.2s ease-out infinite;
+}
+@keyframes pulse-ring {
+  0%   { transform: scale(0.9); opacity: 0.8; }
+  100% { transform: scale(1.35); opacity: 0; }
+}
+@media (max-width: 640px) {
+  .whatsapp-float { right: 16px; bottom: 16px; width: 52px; height: 52px; }
+}
+
+/* ── TESTIMONIAL CAROUSEL ─────────────────────────────── */
+.testimonial-carousel { position: relative; max-width: 640px; margin-inline: auto; }
+.testimonial-carousel-track {
+  position: relative;
+  min-height: 260px;
+}
+.testimonial-carousel-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transform: translateX(24px);
+  transition: opacity .5s ease, transform .5s ease;
+  pointer-events: none;
+}
+.testimonial-carousel-slide.active {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+  position: relative;
+}
+.testimonial-carousel-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 28px;
+}
+.testimonial-carousel-arrow {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  background: var(--white);
+  color: var(--wine);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background var(--t-fast), border-color var(--t-fast), transform var(--t-fast);
+}
+.testimonial-carousel-arrow:hover { background: var(--wine-pale); border-color: var(--wine); transform: translateY(-1px); }
+.testimonial-carousel-dots { display: flex; gap: 8px; }
+.testimonial-carousel-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--border);
+  cursor: pointer;
+  transition: background var(--t-fast), transform var(--t-fast), width var(--t-fast);
+}
+.testimonial-carousel-dot.active {
+  background: var(--wine);
+  width: 22px;
+  border-radius: 99px;
 }
 
 /* ── UTILITIES ───────────────────────────────────────── */

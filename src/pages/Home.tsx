@@ -1,5 +1,10 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { ChevronLeft, ChevronRight, Sparkles, Star, MessageCircle } from 'lucide-react'
 import type { Servico, Depoimento } from '../types'
+import { ServiceIcon } from '../utils/serviceIcons'
+import Reveal from '../components/Reveal'
+import salonPhoto from '../assets/photo-1560066984-138dadb4c035.jpg'
 
 const SERVICOS: Servico[] = [
   { id: '1', nome: 'Corte & Escova',        descricao: 'Corte personalizado com lavatório, hidratação e finalização premium.',   preco: 120, duracao: 60,  categoria: 'cabelo',   icone: '✂️' },
@@ -21,6 +26,57 @@ function StarIcon() {
     <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style={{ color: 'var(--gold)' }}>
       <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
     </svg>
+  )
+}
+
+function TestimonialCarousel({ items }: { items: Depoimento[] }) {
+  const [active, setActive] = useState(0)
+
+  useEffect(() => {
+    const timer = setInterval(() => setActive(i => (i + 1) % items.length), 6000)
+    return () => clearInterval(timer)
+  }, [items.length])
+
+  const go = (index: number) => setActive((index + items.length) % items.length)
+
+  return (
+    <div className="testimonial-carousel">
+      <div className="testimonial-carousel-track">
+        {items.map((d, i) => (
+          <div key={d.id} className={`testimonial-card testimonial-carousel-slide${i === active ? ' active' : ''}`}>
+            <div className="testimonial-stars">
+              {Array.from({ length: d.avaliacao }).map((_, s) => <StarIcon key={s} />)}
+            </div>
+            <p className="testimonial-text">"{d.texto}"</p>
+            <div className="testimonial-author">
+              <div className="testimonial-avatar">{d.nome[0]}</div>
+              <div>
+                <strong className="testimonial-name">{d.nome}</strong>
+                <small className="testimonial-service">{d.servico}</small>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="testimonial-carousel-controls">
+        <button className="testimonial-carousel-arrow" onClick={() => go(active - 1)} aria-label="Depoimento anterior">
+          <ChevronLeft size={18} />
+        </button>
+        <div className="testimonial-carousel-dots">
+          {items.map((d, i) => (
+            <button
+              key={d.id}
+              className={`testimonial-carousel-dot${i === active ? ' active' : ''}`}
+              onClick={() => go(i)}
+              aria-label={`Ver depoimento de ${d.nome}`}
+            />
+          ))}
+        </div>
+        <button className="testimonial-carousel-arrow" onClick={() => go(active + 1)} aria-label="Próximo depoimento">
+          <ChevronRight size={18} />
+        </button>
+      </div>
+    </div>
   )
 }
 
@@ -52,7 +108,7 @@ export default function Home() {
               </div>
               <div className="hero-stat-divider" />
               <div className="hero-stat">
-                <strong>8 anos</strong>
+                <strong>5 anos</strong>
                 <span>De experiência</span>
               </div>
               <div className="hero-stat-divider" />
@@ -73,14 +129,14 @@ export default function Home() {
                 />
               </div>
               <div className="hero-card-float hero-card-float-1">
-                <span>💅</span>
+                <Sparkles size={22} color="var(--wine)" />
                 <div>
                   <strong>Manicure</strong>
                   <small>Disponível hoje</small>
                 </div>
               </div>
               <div className="hero-card-float hero-card-float-2">
-                <span>⭐</span>
+                <Star size={22} color="var(--gold)" fill="var(--gold)" />
                 <div>
                   <strong>4.9 / 5.0</strong>
                   <small>500+ avaliações</small>
@@ -103,10 +159,10 @@ export default function Home() {
             <div className="section-divider" />
           </div>
 
-          <div className="grid-3 anim-fade-up anim-delay-1">
-            {SERVICOS.map(s => (
-              <div key={s.id} className="service-card">
-                <div className="service-card-icon">{s.icone}</div>
+          <div className="grid-3">
+            {SERVICOS.map((s, i) => (
+              <Reveal key={s.id} delay={i * 80} className="service-card">
+                <div className="service-card-icon"><ServiceIcon nome={s.nome} categoria={s.categoria} /></div>
                 <h3 className="service-card-title">{s.nome}</h3>
                 <p className="service-card-desc">{s.descricao}</p>
                 <div className="service-card-footer">
@@ -119,7 +175,7 @@ export default function Home() {
                 <Link to="/agendamento" className="btn btn-outline btn-full" style={{ marginTop: '1.25rem' }}>
                   Agendar
                 </Link>
-              </div>
+              </Reveal>
             ))}
           </div>
 
@@ -132,21 +188,16 @@ export default function Home() {
       {/* SOBRE / DIFERENCIAIS */}
       <section className="section about-section">
         <div className="container about-grid">
-          <div className="about-image-wrap anim-fade-up">
-            <div className="about-image-placeholder">
-              <span style={{ fontSize: '4rem' }}>🌸</span>
-              <p style={{ fontFamily: 'var(--font-display)', color: 'var(--wine)', fontSize: '1.25rem', marginTop: '1rem' }}>
-                Cuidado com alma
-              </p>
-            </div>
-          </div>
-          <div className="about-text anim-fade-up anim-delay-1">
+          <Reveal className="about-image-wrap">
+            <img src={salonPhoto} alt="Interior do Taisa Ateliê de Beleza" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          </Reveal>
+          <Reveal delay={120} className="about-text">
             <span className="section-badge">Nossa história</span>
             <h2 className="section-title" style={{ fontSize: '2.25rem' }}>
               Beleza que nasce do <span className="gradient-text">cuidado genuíno</span>
             </h2>
             <p style={{ color: 'var(--text-muted)', lineHeight: 1.8, marginBottom: '1.5rem' }}>
-              Há mais de 8 anos, o Taisa Ateliê é sinônimo de excelência em beleza feminina em São Paulo.
+              Há mais de 5 anos, o Taisa Ateliê é sinônimo de excelência em beleza feminina em São Paulo.
               Nossa missão é fazer cada cliente se sentir única, especial e completamente cuidada.
             </p>
             <ul className="about-list">
@@ -165,35 +216,21 @@ export default function Home() {
             <Link to="/contato" className="btn btn-primary" style={{ marginTop: '2rem' }}>
               Fale conosco
             </Link>
-          </div>
+          </Reveal>
         </div>
       </section>
 
       {/* DEPOIMENTOS */}
       <section className="section" style={{ background: 'var(--rose-light)' }}>
         <div className="container">
-          <div className="section-header anim-fade-up">
+          <Reveal as="div" className="section-header">
             <span className="section-badge">Depoimentos</span>
             <h2 className="section-title">O que nossas clientes <span className="gradient-text">dizem</span></h2>
             <div className="section-divider" />
-          </div>
-          <div className="grid-3 anim-fade-up anim-delay-1">
-            {DEPOIMENTOS.map(d => (
-              <div key={d.id} className="testimonial-card">
-                <div className="testimonial-stars">
-                  {Array.from({ length: d.avaliacao }).map((_, i) => <StarIcon key={i} />)}
-                </div>
-                <p className="testimonial-text">"{d.texto}"</p>
-                <div className="testimonial-author">
-                  <div className="testimonial-avatar">{d.nome[0]}</div>
-                  <div>
-                    <strong className="testimonial-name">{d.nome}</strong>
-                    <small className="testimonial-service">{d.servico}</small>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+          </Reveal>
+          <Reveal delay={100}>
+            <TestimonialCarousel items={DEPOIMENTOS} />
+          </Reveal>
         </div>
       </section>
 
@@ -213,7 +250,9 @@ export default function Home() {
           </p>
           <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
             <Link to="/agendamento" className="btn btn-gold btn-lg">Agendar agora</Link>
-            <Link to="/contato" className="btn btn-outline-white btn-lg">Falar no WhatsApp</Link>
+            <Link to="/contato" className="btn btn-outline-white btn-lg">
+              <MessageCircle size={18} /> Falar no WhatsApp
+            </Link>
           </div>
         </div>
       </section>
