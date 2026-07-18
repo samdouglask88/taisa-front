@@ -10,7 +10,8 @@ interface RevealProps {
 }
 
 export default function Reveal({ children, delay = 0, className = '', as = 'div', style }: RevealProps) {
-  const ref = useRef<HTMLDivElement>(null)
+  // HTMLElement cobre tanto <div> quanto <section>, dispensando casts
+  const ref = useRef<HTMLElement | null>(null)
   const [visible, setVisible] = useState(false)
 
   useEffect(() => {
@@ -33,7 +34,7 @@ export default function Reveal({ children, delay = 0, className = '', as = 'div'
   const Tag = as
   return (
     <Tag
-      ref={ref as any}
+      ref={(node: HTMLElement | null) => { ref.current = node }}
       className={`reveal${visible ? ' is-visible' : ''}${className ? ` ${className}` : ''}`}
       style={{ ...style, transitionDelay: `${delay}ms` }}
     >

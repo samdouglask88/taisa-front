@@ -1,3 +1,4 @@
+import { createElement } from 'react'
 import { Scissors, Palette, Sparkles, Gift, Droplet, Brush, Waves, Gem } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
@@ -33,7 +34,7 @@ function normalize(value: string) {
     .replace(/\p{Mark}/gu, '')
 }
 
-export function iconForService(nome: string, categoria: string): LucideIcon {
+function iconForService(nome: string, categoria: string): LucideIcon {
   const normalizedName = normalize(nome)
   const nameMatch = Object.entries(NAME_ICONS).find(([key]) => normalizedName.includes(normalize(key)))
   if (nameMatch) return nameMatch[1]
@@ -50,6 +51,7 @@ interface ServiceIconProps {
 }
 
 export function ServiceIcon({ nome = '', categoria, size = 24, className }: ServiceIconProps) {
-  const Icon = iconForService(nome, categoria)
-  return <Icon size={size} strokeWidth={1.75} className={className} />
+  // createElement em vez de JSX: os ícones vêm de Records estáticos, nenhum
+  // componente é criado durante o render — só selecionado
+  return createElement(iconForService(nome, categoria), { size, strokeWidth: 1.75, className })
 }

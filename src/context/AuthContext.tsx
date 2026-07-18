@@ -1,6 +1,7 @@
-import { createContext, useContext, useState, useEffect } from 'react'
+import { createContext, useContext, useState } from 'react'
 import type { ReactNode } from 'react'
 import type { User } from '../types'
+import type { ApiLoginResponse } from '../types/api'
 import { apiFetch } from '../services/api'
 
 interface AuthContextType {
@@ -13,16 +14,15 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | null>(null)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
-
-  useEffect(() => {
+  // Inicialização lazy: restaura a sessão salva uma única vez, sem useEffect
+  const [user, setUser] = useState<User | null>(() => {
     const stored = localStorage.getItem('taisa_user')
-    if (stored) setUser(JSON.parse(stored))
-  }, [])
+    return stored ? JSON.parse(stored) : null
+  })
 
   const login = async (email: string, senha: string): Promise<boolean> => {
     try {
-      const data = await apiFetch('/auth/login', {
+      const data = await apiFetch<ApiLoginResponse>('/auth/login', {
         method: 'POST',
         body: JSON.stringify({ email, password: senha }),
       })
@@ -52,6 +52,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   )
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- padrão consagrado: provider e hook no mesmo arquivo
 export function useAuth() {
   const ctx = useContext(AuthContext)
   if (!ctx) throw new Error('useAuth must be used within AuthProvider')

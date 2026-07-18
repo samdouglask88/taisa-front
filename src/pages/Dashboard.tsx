@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import type { Agendamento, Cliente } from '../types'
+import type { ApiAppointment, ApiService } from '../types/api'
 import { apiFetch } from '../services/api'
 import {
   AreaChart, Area, BarChart, Bar,
@@ -37,7 +38,7 @@ interface ServicoAdmin {
 }
 
 // ── Mappers ──────────────────────────────────────────────
-function mapAgendamento(a: any): Agendamento {
+function mapAgendamento(a: ApiAppointment): Agendamento {
   return {
     id: a._id,
     cliente: a.client?.name ?? 'Cliente',
@@ -51,7 +52,7 @@ function mapAgendamento(a: any): Agendamento {
   }
 }
 
-function mapServico(s: any): ServicoAdmin {
+function mapServico(s: ApiService): ServicoAdmin {
   return {
     id: s._id,
     nome: s.name,
@@ -137,7 +138,13 @@ function buildServicesRanking(agendamentos: Agendamento[]) {
     .sort((a, b) => b.count - a.count)
 }
 
-const CustomTooltip = ({ active, payload, label }: any) => {
+interface ChartTooltipProps {
+  active?: boolean
+  payload?: Array<{ value?: number | string }>
+  label?: string
+}
+
+const CustomTooltip = ({ active, payload, label }: ChartTooltipProps) => {
   if (!active || !payload?.length) return null
   return (
     <div className="chart-tooltip">
@@ -163,11 +170,11 @@ export default function Dashboard() {
 
   useEffect(() => {
     Promise.all([
-      apiFetch('/appointments').catch(() => []),
-      apiFetch('/clients').catch(() => []),
+      apiFetch<ApiAppointment[]>('/appointments').catch(() => [] as ApiAppointment[]),
+      apiFetch<Cliente[]>('/clients').catch(() => [] as Cliente[]),
     ]).then(([apps, clients]) => {
-      setAgendamentos((apps as any[]).map(mapAgendamento))
-      setClientes(clients as Cliente[])
+      setAgendamentos(apps.map(mapAgendamento))
+      setClientes(clients)
     }).finally(() => setLoading(false))
   }, [])
 
@@ -192,7 +199,7 @@ export default function Dashboard() {
     try {
       await apiFetch(`/appointments/${id}`, { method: 'PUT', body: JSON.stringify({ status: novoStatus }) })
       setAgendamentos(prev => prev.map(a => a.id === id ? { ...a, status: novoStatus as Agendamento['status'] } : a))
-    } catch { }
+    } catch { /* falha de rede: mantém o estado atual da tela */ }
   }
 
   const servicesRanking = useMemo(() => buildServicesRanking(agendamentos), [agendamentos])
@@ -444,7 +451,7 @@ export default function Dashboard() {
                             tickFormatter={v => v.length > 8 ? v.slice(0, 8) + '…' : v} />
                           <YAxis hide />
                           <Tooltip
-                            formatter={(v: any, name: string) =>
+                            formatter={(v: number | string, name: string) =>
                               name === 'count' ? [`${v} atend.`, 'Qtd'] : [`R$ ${Number(v).toFixed(2)}`, 'Receita']
                             }
                             contentStyle={{ fontSize: 11, borderRadius: 8, border: '1px solid #f0e8e8' }}
@@ -640,7 +647,7 @@ function ServicosTab() {
 
   useEffect(() => {
     apiFetch('/services')
-      .then((data: any) => setServicos((data as any[]).map(mapServico)))
+      .then((data) => setServicos((data as ApiService[]).map(mapServico)))
       .catch(() => setError('Erro ao carregar serviços.'))
       .finally(() => setLoading(false))
   }, [])
@@ -658,7 +665,7 @@ function ServicosTab() {
         body: JSON.stringify({ name: srv.nome, description: srv.descricao, price: val, durationMinutes: srv.duracao, category: srv.categoria, active: srv.ativo }),
       })
       setServicos(prev => prev.map(s => s.id === id ? { ...s, preco: val } : s))
-    } catch { }
+    } catch { /* falha de rede: mantém o estado atual da tela */ }
     setEditingPrice(null)
   }
 
@@ -669,14 +676,14 @@ function ServicosTab() {
         body: JSON.stringify({ name: srv.nome, description: srv.descricao, price: srv.preco, durationMinutes: srv.duracao, category: srv.categoria, active: !srv.ativo }),
       })
       setServicos(prev => prev.map(s => s.id === srv.id ? { ...s, ativo: !s.ativo } : s))
-    } catch { }
+    } catch { /* falha de rede: mantém o estado atual da tela */ }
   }
 
   const handleSaveModal = async (form: Omit<ServicoAdmin, 'id'>) => {
     setSaving(true)
     try {
       if (editModal === 'new') {
-        const created = await apiFetch('/services', {
+        const created = await apiFetch<ApiService>('/services', {
           method: 'POST',
           body: JSON.stringify({ name: form.nome, description: form.descricao, price: form.preco, durationMinutes: form.duracao, category: form.categoria, active: true }),
         })
@@ -689,7 +696,7 @@ function ServicosTab() {
         setServicos(prev => prev.map(s => s.id === editModal.id ? { ...s, ...form } : s))
       }
       setEditModal(null)
-    } catch { }
+    } catch { /* falha de rede: mantém o estado atual da tela */ }
     setSaving(false)
   }
 
@@ -908,7 +915,7 @@ function ClientesTab({ clientes, agendamentos, onUpdateCliente }: ClientesTabPro
       })
       onUpdateCliente(id, form)
       setEditModal(null)
-    } catch { }
+    } catch { /* falha de rede: mantém o estado atual da tela */ }
     setSaving(false)
   }
 

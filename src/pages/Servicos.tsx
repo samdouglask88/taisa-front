@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import type { Servico } from '../types'
+import type { ApiService } from '../types/api'
 import { apiFetch } from '../services/api'
 import { ServiceIcon } from '../utils/serviceIcons'
 import Reveal from '../components/Reveal'
@@ -19,14 +20,14 @@ const FALLBACK: Servico[] = [
 
 const CATEGORIAS = ['Todos', 'Cabelo', 'Unhas', 'Estética', 'Pacote']
 
-function mapServico(s: any): Servico {
+function mapServico(s: ApiService): Servico {
   return {
-    id: s._id ?? s.id,
-    nome: s.name ?? s.nome,
-    descricao: s.description ?? s.descricao,
-    preco: s.price ?? s.preco,
-    duracao: s.durationMinutes ?? s.duracao,
-    categoria: s.category ?? s.categoria,
+    id: s._id,
+    nome: s.name,
+    descricao: s.description ?? '',
+    preco: s.price,
+    duracao: s.durationMinutes ?? 0,
+    categoria: s.category,
     icone: '',
   }
 }
@@ -36,11 +37,11 @@ export default function Servicos() {
   const [servicos, setServicos] = useState<Servico[]>(FALLBACK)
 
   useEffect(() => {
-    apiFetch('/services')
-      .then((data: any[]) => {
+    apiFetch<ApiService[]>('/services')
+      .then((data) => {
         if (data && data.length > 0) setServicos(data.map(mapServico))
       })
-      .catch(() => {})
+      .catch(() => { /* mantém o catálogo FALLBACK exibido */ })
   }, [])
 
   const filtrados = catAtiva === 'Todos'
