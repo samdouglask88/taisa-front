@@ -14,10 +14,17 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | null>(null)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  // Inicialização lazy: restaura a sessão salva uma única vez, sem useEffect
+  // Inicialização lazy: restaura a sessão salva uma única vez, sem useEffect.
+  // try/catch: um valor corrompido no localStorage não pode derrubar o app.
   const [user, setUser] = useState<User | null>(() => {
-    const stored = localStorage.getItem('taisa_user')
-    return stored ? JSON.parse(stored) : null
+    try {
+      const stored = localStorage.getItem('taisa_user')
+      return stored ? JSON.parse(stored) : null
+    } catch {
+      localStorage.removeItem('taisa_user')
+      localStorage.removeItem('taisa_token')
+      return null
+    }
   })
 
   const login = async (email: string, senha: string): Promise<boolean> => {
