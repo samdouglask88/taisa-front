@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { CheckCircle2, Phone, Clock, MessageCircle } from 'lucide-react'
+import { SITE, whatsappUrl } from '../config/site'
 
 interface FormData { nome: string; email: string; telefone: string; assunto: string; mensagem: string }
 const EMPTY: FormData = { nome: '', email: '', telefone: '', assunto: '', mensagem: '' }
@@ -100,18 +101,14 @@ export default function Contato() {
               {
                 titulo: 'Informações de contato', Icone: Phone,
                 itens: [
-                  { label: 'Telefone', valor: '(11) 98765-4321' },
-                  { label: 'E-mail', valor: 'contato@taisa.com.br' },
-                  { label: 'Endereço', valor: 'São Paulo, SP' },
+                  { label: 'Telefone', valor: SITE.telefoneExibicao },
+                  { label: 'E-mail', valor: SITE.email },
+                  { label: 'Endereço', valor: SITE.cidade },
                 ]
               },
               {
                 titulo: 'Horários de funcionamento', Icone: Clock,
-                itens: [
-                  { label: 'Seg – Sex', valor: '09h às 19h' },
-                  { label: 'Sábado', valor: '10h às 17h' },
-                  { label: 'Domingo', valor: 'Fechado' },
-                ]
+                itens: [...SITE.horarios],
               },
             ].map(card => (
               <div key={card.titulo} className="card" style={{ padding: '1.75rem' }}>
@@ -132,7 +129,7 @@ export default function Contato() {
 
             {/* WhatsApp destaque */}
             <a
-              href="https://wa.me/5511987654321"
+              href={whatsappUrl('Olá! Vim pelo site e gostaria de mais informações.')}
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-primary btn-full btn-lg"

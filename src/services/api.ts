@@ -1,4 +1,5 @@
-const BASE_URL = 'http://localhost:3333'
+// Em produção, defina VITE_API_URL no ambiente de build (ex.: .env.production)
+const BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3333'
 
 export async function apiFetch<T = any>(path: string, options?: RequestInit): Promise<T> {
     const token = localStorage.getItem('taisa_token')

@@ -1,14 +1,12 @@
 import { MessageCircle } from 'lucide-react'
+import { whatsappUrl } from '../config/site'
 
-const WHATSAPP_NUMBER = '5511987654321'
 const DEFAULT_MESSAGE = 'Olá! Vim pelo site e gostaria de saber mais sobre os serviços do Taisa Ateliê.'
 
 export default function WhatsAppFloat() {
-  const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(DEFAULT_MESSAGE)}`
-
   return (
     <a
-      href={url}
+      href={whatsappUrl(DEFAULT_MESSAGE)}
       target="_blank"
       rel="noopener noreferrer"
       className="whatsapp-float"

@@ -37,6 +37,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const logout = () => {
+    // Revoga o token no servidor antes de descartá-lo localmente;
+    // se a chamada falhar (servidor fora do ar), o logout local acontece igual.
+    apiFetch('/auth/logout', { method: 'POST' }).catch(() => {})
     setUser(null)
     localStorage.removeItem('taisa_user')
     localStorage.removeItem('taisa_token')
